@@ -28,7 +28,6 @@ DIV.append(BUTTONS);
 makeRows(BUTTONS);
 
 const buttons = getLanguage() === 'eng' ? buttonActions : buttonActionsRus;
-console.log('buttons', buttons);
 
 makeButtonValue(buttons, BUTTONS);
 
