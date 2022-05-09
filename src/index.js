@@ -14,6 +14,8 @@ const BUTTONS = document.createElement('div');
 BUTTONS.className = 'buttons';
 DIV.append(BUTTONS);
 
+let isLang = false;
+
 function makeRows() {
   for (let i = 0; i < 5; i += 1) {
     const row = document.createElement('div');
@@ -36,26 +38,26 @@ const buttonActions = [
 ];
 
 const buttonShiftEng = [
-  ['`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+'],
-  ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}'],
-  ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '|'],
-  ['Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?'],
+  ['`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 'Back ⮨'],
+  ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', 'DEL'],
+  ['Caps Lock', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '|', 'Enter'],
+  ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?', '▲', 'Shift'],
   ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '◄', '▼', '►'],
 ];
 
 const buttonActionsRus = [
   ['ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Back ⮨'],
-  ['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ'],
-  ['ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', '\\'],
-  ['я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.'],
+  ['Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', 'DEL'],
+  ['Caps Lock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', '\\', 'Enter'],
+  ['Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '▲', 'Shift'],
   ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '◄', '▼', '►'],
 ];
 
 const buttonShiftRus = [
-  ['Ё', '!', '"', '№', ';', '%', ':', '?', '*', '(', ')', '_', '+'],
-  ['Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', 'Щ', 'З', 'Х', 'Ъ'],
-  ['Ф', 'Ы', 'В', 'А', 'П', 'Р', 'О', 'Л', 'Д', 'Ж', 'Э', '/'],
-  ['Я', 'Ч', 'С', 'М', 'И', 'Т', 'Ь', 'Б', 'Ю', ','],
+  ['Ё', '!', '"', '№', ';', '%', ':', '?', '*', '(', ')', '_', '+', 'Back ⮨'],
+  ['Tab', 'Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', 'Щ', 'З', 'Х', 'Ъ', 'DEL'],
+  ['Caps Lock', 'Ф', 'Ы', 'В', 'А', 'П', 'Р', 'О', 'Л', 'Д', 'Ж', 'Э', '/', 'Enter'],
+  ['Shift', 'Я', 'Ч', 'С', 'М', 'И', 'Т', 'Ь', 'Б', 'Ю', ',', '▲', 'Shift'],
   ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '◄', '▼', '►'],
 ];
 
@@ -70,9 +72,53 @@ function getBtnContent(array) {
   return fragment;
 }
 
-buttonActions.forEach((actionsRow, index) => {
-  BUTTONS.childNodes[index].append(getBtnContent(actionsRow));
-});
+function makeButtonValue(array) {
+  [...BUTTONS.children].forEach((row) => row.innerHTML = '');
+  array.forEach((actionsRow, index) => {
+    BUTTONS.childNodes[index].append(getBtnContent(actionsRow));
+  });
+}
+
+function runOnKeys(func, ...codes) {
+  const pressed = new Set();
+  document.addEventListener('keydown', (event) => {
+    pressed.add(event.code);
+    for (const code of codes) { // все ли клавиши из набора нажаты?
+      if (!pressed.has(code)) {
+        console.log(pressed);
+        return;
+      }
+    }
+    pressed.clear();
+    func();
+  });
+  document.addEventListener('keyup', (event) => {
+    pressed.delete(event.code);
+  });
+}
+
+function isLangChanged() {
+  if (isLang === false) {
+    isLang = true;
+  } else {
+    isLang = false;
+  }
+  // isLang === false ? true : false;
+  console.log(isLang);
+}
+
+makeButtonValue(buttonActions);
+
+function addClasses() {
+  BUTTONS.childNodes[2].childNodes[0].classList.add('caps');
+  BUTTONS.childNodes[2].lastChild.classList.add('enter');
+  BUTTONS.childNodes[4].childNodes[3].classList.add('space');
+  BUTTONS.childNodes[4].childNodes[0].classList.add('ctrls');
+  BUTTONS.childNodes[4].childNodes[5].classList.add('ctrls');
+  BUTTONS.childNodes[3].firstChild.classList.add('shift');
+  BUTTONS.childNodes[4].childNodes[2].classList.add('alts');
+  BUTTONS.childNodes[4].childNodes[4].classList.add('alts');
+}
 
 function showTextContent() {
   document.querySelectorAll('.key').forEach((element) => {
@@ -91,73 +137,84 @@ function showTextContent() {
   });
 }
 
-// showTextContent();
-
-const CAPS = BUTTONS.childNodes[2].childNodes[0];
-const ENTER = BUTTONS.childNodes[2].lastChild;
-const TAB = BUTTONS.childNodes[1].firstChild;
-const DEL = BUTTONS.childNodes[1].lastChild;
-const SPACE = BUTTONS.childNodes[4].childNodes[3];
-const ctrlLeft = BUTTONS.childNodes[4].childNodes[0];
-const ctrlRight = BUTTONS.childNodes[4].childNodes[5];
-const shiftLeft = BUTTONS.childNodes[3].firstChild;
-const shiftRight = BUTTONS.childNodes[3].lastChild;
-const altLeft = BUTTONS.childNodes[4].childNodes[2];
-const altRight = BUTTONS.childNodes[4].childNodes[4];
-
-CAPS.classList.add('caps');
-ENTER.classList.add('enter');
-SPACE.classList.add('space');
-ctrlLeft.classList.add('ctrls');
-ctrlRight.classList.add('ctrls');
-shiftLeft.classList.add('shift');
-altLeft.classList.add('alts');
-altRight.classList.add('alts');
-
-const keys = Array.from(document.querySelectorAll('.key'));
-CAPS.addEventListener('click', () => {
-  for (let i = 0; i < keys.length; i += 1) {
-    keys[i].classList.toggle('upperCase');
-  }
-});
-
-showTextContent();
-
-const dictionary = {
-  tab: '  ',
-  space: ' ',
-};
-
-const layout = {
-  eng: {
-    default: [
-      '` 1 2 3 4 5 6 7 8 9 0 - = {bksp}',
-      '{tab} q w e r t y u i o p [ ] \\',
-      "{capslock} a s d f g h j k l ; ' {enter}",
-      '{shiftleft} z x c v b n m , . / ↑ {shiftright}',
-      '{ctrlleft} {home} {altleft} {space} {altright} ← ↓ → {ctrlright}',
-    ],
-    shift: [
-      '~ ! @ # $ % ^ & * ( ) _ + {bksp}',
-      '{tab} Q W E R T Y U I O P { } |',
-      '{lock} A S D F G H J K L : " {enter}',
-      '{shift} Z X C V B N M < > ? {shift}',
-      '.com @ {space}',
-    ],
-  },
-  rus: [[]],
-};
-// locale: 'eng', 'rus'
-function getCurrentLang(locale) {
-  return layout[locale];
+function upperCase() {
+  const keys = Array.from(document.querySelectorAll('.key'));
+  BUTTONS.childNodes[2].childNodes[0].addEventListener('click', () => {
+    for (let i = 0; i < keys.length; i += 1) {
+      keys[i].classList.toggle('upperCase');
+    }
+  });
 }
 
-CAPS.addEventListener('click', (event) => {
-  const currentBtn = event.target;
-  const { buttonType } = currentBtn.dataset;
+function changeButtonValue() {
+  isLangChanged();
+  if (isLang === false) {
+    makeButtonValue(buttonActions);
+  } else {
+    makeButtonValue(buttonActionsRus);
+  }
+  addClasses();
+  showTextContent();
+  upperCase();
+}
 
-  TEXTAREA.textContent = dictionary[buttonType];
-});
+runOnKeys(
+  () => changeButtonValue(),
+  // showTextContent(),
+
+  'ControlLeft',
+  'AltLeft',
+);
+showTextContent();
+addClasses();
+upperCase();
+
+// const CAPS = BUTTONS.childNodes[2].childNodes[0];
+// const ENTER = BUTTONS.childNodes[2].lastChild;
+// const TAB = BUTTONS.childNodes[1].firstChild;
+// const DEL = BUTTONS.childNodes[1].lastChild;
+// const SPACE = BUTTONS.childNodes[4].childNodes[3];
+// const ctrlLeft = BUTTONS.childNodes[4].childNodes[0];
+// const ctrlRight = BUTTONS.childNodes[4].childNodes[5];
+// const shiftLeft = BUTTONS.childNodes[3].firstChild;
+// const shiftRight = BUTTONS.childNodes[3].lastChild;
+// const altLeft = BUTTONS.childNodes[4].childNodes[2];
+// const altRight = BUTTONS.childNodes[4].childNodes[4];
+// const dictionary = {
+//   tab: '  ',
+//   space: ' ',
+// };
+
+// const layout = {
+//   eng: {
+//     default: [
+//       '` 1 2 3 4 5 6 7 8 9 0 - = {bksp}',
+//       '{tab} q w e r t y u i o p [ ] \\',
+//       "{capslock} a s d f g h j k l ; ' {enter}",
+//       '{shiftleft} z x c v b n m , . / ↑ {shiftright}',
+//       '{ctrlleft} {home} {altleft} {space} {altright} ← ↓ → {ctrlright}',
+//     ],
+//     shift: [
+//       '~ ! @ # $ % ^ & * ( ) _ + {bksp}',
+//       '{tab} Q W E R T Y U I O P { } |',
+//       '{lock} A S D F G H J K L : " {enter}',
+//       '{shift} Z X C V B N M < > ? {shift}',
+//       '.com @ {space}',
+//     ],
+//   },
+//   rus: [[]],
+// };
+// // locale: 'eng', 'rus'
+// function getCurrentLang(locale) {
+//   return layout[locale];
+// }
+
+// CAPS.addEventListener('click', (event) => {
+//   const currentBtn = event.target;
+//   const { buttonType } = currentBtn.dataset;
+
+//   TEXTAREA.textContent = dictionary[buttonType];
+// });
 
 /// //
 // {
