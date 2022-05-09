@@ -10,6 +10,16 @@ module.exports = {
       keep: /\.git/,
     },
   },
+  mode: 'development',
+  devServer: {
+    open: true,
+    host: 'localhost',
+    static: './dist',
+    client: {
+      overlay: true,
+    },
+  },
+  // devtool: 'inline-source-map',
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Virtual Keyboard',

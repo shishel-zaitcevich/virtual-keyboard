@@ -1,9 +1,20 @@
 import './assets/style.css';
+import {
+  buttonShiftRus, buttonActionsRus, buttonShiftEng, buttonActions, functionalButtons,
+} from './constants/constants';
+import {
+  makeRows, makeButtonValue, runOnKeys, addClasses, upperCase, updateLanguage, getLanguage,
+} from './services/keyboard-service';
 
 const BODY = document.querySelector('body');
 const DIV = document.createElement('div');
 DIV.className = 'keyboard';
 BODY.append(DIV);
+
+const TEXT = document.createElement('p');
+TEXT.className = 'text';
+BODY.append(TEXT);
+TEXT.innerHTML = 'This keyboard made in Windows \n Change language left ctrl + left alt';
 
 const TEXTAREA = document.createElement('textarea');
 TEXTAREA.className = 'textarea';
@@ -14,111 +25,24 @@ const BUTTONS = document.createElement('div');
 BUTTONS.className = 'buttons';
 DIV.append(BUTTONS);
 
-let isLang = false;
+// const language = getLanguage();
 
-function makeRows() {
-  for (let i = 0; i < 5; i += 1) {
-    const row = document.createElement('div');
-    row.className = 'row';
-    BUTTONS.append(row);
-  }
-  return BUTTONS;
-}
+makeRows(BUTTONS);
 
-makeRows();
+// function isLangChanged() {
+//   if (isLang === false) {
+//     isLang = true;
+//   } else {
+//     isLang = false;
+//   }
+//   console.log(isLang);
+//   // isLang === false ? true : false;
+// }
 
-const functionalButtons = ['Back ⮨', 'Tab', 'DEL', 'Caps Lock', 'Enter', 'Shift', 'Ctrl', 'Win', 'Alt'];
+const buttons = getLanguage() === 'eng' ? buttonActions : buttonActionsRus;
+console.log('buttons', buttons);
 
-const buttonActions = [
-  ['~', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Back ⮨'],
-  ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'DEL'],
-  ['Caps Lock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'Enter'],
-  ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '.', ',', '/', '▲', 'Shift'],
-  ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '◄', '▼', '►'],
-];
-
-const buttonShiftEng = [
-  ['`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 'Back ⮨'],
-  ['Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', 'DEL'],
-  ['Caps Lock', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '|', 'Enter'],
-  ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?', '▲', 'Shift'],
-  ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '◄', '▼', '►'],
-];
-
-const buttonActionsRus = [
-  ['ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Back ⮨'],
-  ['Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', 'DEL'],
-  ['Caps Lock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', '\\', 'Enter'],
-  ['Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '.', '▲', 'Shift'],
-  ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '◄', '▼', '►'],
-];
-
-const buttonShiftRus = [
-  ['Ё', '!', '"', '№', ';', '%', ':', '?', '*', '(', ')', '_', '+', 'Back ⮨'],
-  ['Tab', 'Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', 'Щ', 'З', 'Х', 'Ъ', 'DEL'],
-  ['Caps Lock', 'Ф', 'Ы', 'В', 'А', 'П', 'Р', 'О', 'Л', 'Д', 'Ж', 'Э', '/', 'Enter'],
-  ['Shift', 'Я', 'Ч', 'С', 'М', 'И', 'Т', 'Ь', 'Б', 'Ю', ',', '▲', 'Shift'],
-  ['Ctrl', 'Win', 'Alt', ' ', 'Alt', 'Ctrl', '◄', '▼', '►'],
-];
-
-function getBtnContent(array) {
-  const fragment = new DocumentFragment();
-  for (let i = 0; i < array.length; i += 1) {
-    const key = document.createElement('div');
-    key.append(array[i]);
-    key.className = 'key';
-    fragment.append(key);
-  }
-  return fragment;
-}
-
-function makeButtonValue(array) {
-  [...BUTTONS.children].forEach((row) => row.innerHTML = '');
-  array.forEach((actionsRow, index) => {
-    BUTTONS.childNodes[index].append(getBtnContent(actionsRow));
-  });
-}
-
-function runOnKeys(func, ...codes) {
-  const pressed = new Set();
-  document.addEventListener('keydown', (event) => {
-    pressed.add(event.code);
-    for (const code of codes) { // все ли клавиши из набора нажаты?
-      if (!pressed.has(code)) {
-        console.log(pressed);
-        return;
-      }
-    }
-    pressed.clear();
-    func();
-  });
-  document.addEventListener('keyup', (event) => {
-    pressed.delete(event.code);
-  });
-}
-
-function isLangChanged() {
-  if (isLang === false) {
-    isLang = true;
-  } else {
-    isLang = false;
-  }
-  // isLang === false ? true : false;
-  console.log(isLang);
-}
-
-makeButtonValue(buttonActions);
-
-function addClasses() {
-  BUTTONS.childNodes[2].childNodes[0].classList.add('caps');
-  BUTTONS.childNodes[2].lastChild.classList.add('enter');
-  BUTTONS.childNodes[4].childNodes[3].classList.add('space');
-  BUTTONS.childNodes[4].childNodes[0].classList.add('ctrls');
-  BUTTONS.childNodes[4].childNodes[5].classList.add('ctrls');
-  BUTTONS.childNodes[3].firstChild.classList.add('shift');
-  BUTTONS.childNodes[4].childNodes[2].classList.add('alts');
-  BUTTONS.childNodes[4].childNodes[4].classList.add('alts');
-}
+makeButtonValue(buttons, BUTTONS);
 
 function showTextContent() {
   document.querySelectorAll('.key').forEach((element) => {
@@ -137,37 +61,97 @@ function showTextContent() {
   });
 }
 
-function upperCase() {
-  const keys = Array.from(document.querySelectorAll('.key'));
-  BUTTONS.childNodes[2].childNodes[0].addEventListener('click', () => {
-    for (let i = 0; i < keys.length; i += 1) {
-      keys[i].classList.toggle('upperCase');
-    }
-  });
-}
-
 function changeButtonValue() {
-  isLangChanged();
-  if (isLang === false) {
-    makeButtonValue(buttonActions);
+  // isLangChanged();
+  const languageToChange = getLanguage() === 'eng' ? 'rus' : 'eng';
+  if (languageToChange === 'eng') {
+    makeButtonValue(buttonActions, BUTTONS);
   } else {
-    makeButtonValue(buttonActionsRus);
+    makeButtonValue(buttonActionsRus, BUTTONS);
   }
-  addClasses();
+
+  updateLanguage(languageToChange);
+
+  // if (isLang === false) {
+  //   makeButtonValue(buttonActions, BUTTONS);
+  // } else {
+  //   makeButtonValue(buttonActionsRus, BUTTONS);
+  // }
+  addClasses(BUTTONS);
   showTextContent();
-  upperCase();
+  upperCase(BUTTONS);
 }
 
 runOnKeys(
   () => changeButtonValue(),
-  // showTextContent(),
-
   'ControlLeft',
   'AltLeft',
 );
+
+// function setLocalStorage() {
+//   console.log(isLangChanged());
+//   localStorage.setItem('isLang', isLang);
+// }
+// window.addEventListener('beforeunload', setLocalStorage);
+// console.log(setLocalStorage('set', isLang));
+
+// function getLocalStorage() {
+//   if (localStorage.getItem('isLang')) {
+//     isLang = localStorage.getItem('isLang');
+//     return changeButtonValue();
+//   }
+//   return false;
+// }
+// window.addEventListener('load', getLocalStorage);
+// console.log(getLocalStorage('get', isLang));
+
 showTextContent();
-addClasses();
-upperCase();
+addClasses(BUTTONS);
+upperCase(BUTTONS);
+
+function changeShiftValue() {
+  if (getLanguage() === 'eng') {
+    makeButtonValue(buttonShiftEng, BUTTONS);
+  } else {
+    makeButtonValue(buttonShiftRus, BUTTONS);
+  }
+  addClasses(BUTTONS);
+  showTextContent();
+}
+
+runOnKeys(
+  () => changeShiftValue(),
+  'ShiftLeft',
+);
+
+function handleKeyboardPress(event) {
+  const btnsElements = [...document.querySelectorAll('.key')];
+  const findBtn = (el) => {
+    let valueToCompare = el.innerText;
+    let btnKey = event.key;
+    if (el.dataset.key !== undefined) {
+      btnKey = event.code;
+      valueToCompare = el.dataset.key;
+    }
+    return valueToCompare === btnKey;
+  };
+  const btn = btnsElements.find(findBtn);
+
+  // console.log('innerText', btn.innerText);
+  if (btn && event.type === 'keydown') {
+    btn.click();
+    btn.classList.add('active');
+  }
+  if (btn && event.type === 'keyup') {
+    btn.classList.remove('active');
+  }
+  event.preventDefault();
+}
+
+document.addEventListener('keydown', handleKeyboardPress);
+document.addEventListener('keyup', handleKeyboardPress);
+
+//
 
 // const CAPS = BUTTONS.childNodes[2].childNodes[0];
 // const ENTER = BUTTONS.childNodes[2].lastChild;
