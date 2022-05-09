@@ -44,17 +44,6 @@ function makeButtonValue(array, buttons) {
   array.forEach((actionsRow, index) => {
     buttons.childNodes[index].append(getBtnContent(actionsRow, index));
   });
-
-  //   /// 2
-
-//   for (let i = 0; i < array.length; i += 1) {
-//     for (let j = 0; j < array[i].length; j += 1) {
-//       buttons.childNodes[index].innerHTML = array[i][j];
-//       if (buttonActions1[i][j] !== '') {
-//         button_i.setAttribute('data-key', buttonActions1[i][j]);
-//       }
-//     }
-//   }
 }
 
 function runOnKeys(func, ...codes) {
@@ -85,23 +74,6 @@ function addClasses(buttons) {
   buttons.childNodes[4].childNodes[4].classList.add('alts');
 }
 
-// function showTextContent(array, buttons, textarea) {
-//   document.querySelectorAll('.key').forEach((element) => {
-//     element.addEventListener('click', () => {
-//       for (let i = 0; i < array.length; i += 1) {
-//         if (element.textContent === array[i]) {
-//           return;
-//         }
-//       }
-//       const isUpperCase = buttons.childNodes[2].childNodes[0].classList.contains('upperCase');
-//       const char = element.textContent;
-//       let displayText = textarea.textContent;
-//       displayText += isUpperCase ? char.toUpperCase() : char;
-//       textarea.textContent = displayText;
-//     });
-//   });
-// }
-
 function upperCase(buttons) {
   const keys = Array.from(document.querySelectorAll('.key'));
   buttons.childNodes[2].childNodes[0].addEventListener('click', () => {
@@ -109,7 +81,7 @@ function upperCase(buttons) {
       keys[i].classList.toggle('upperCase');
     }
   });
-} // не работает
+}
 
 export {
   makeRows, makeButtonValue, runOnKeys, addClasses, upperCase, updateLanguage, getLanguage,
